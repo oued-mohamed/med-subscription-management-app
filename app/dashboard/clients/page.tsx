@@ -7,23 +7,28 @@ import { AddClientButton } from "@/components/add-client-button"
 import { ImportClientsButton } from "@/components/import-clients-button"
 
 async function getClientsData() {
-  const clients = await sql`
-    SELECT 
-      c.id,
-      c.name,
-      c.phone,
-      c.email,
-      c.created_at,
-      COUNT(s.id) as subscription_count,
-      MAX(s.end_date) as latest_expiry,
-      SUM(CASE WHEN s.status = 'active' THEN 1 ELSE 0 END) as active_count
-    FROM clients c
-    LEFT JOIN subscriptions s ON c.id = s.client_id
-    GROUP BY c.id, c.name, c.phone, c.email, c.created_at
-    ORDER BY c.created_at DESC
-  `
+  try {
+    const clients = await sql`
+      SELECT 
+        c.id,
+        c.name,
+        c.phone,
+        c.email,
+        c.created_at,
+        COUNT(s.id) as subscription_count,
+        MAX(s.end_date) as latest_expiry,
+        SUM(CASE WHEN s.status = 'active' THEN 1 ELSE 0 END) as active_count
+      FROM clients c
+      LEFT JOIN subscriptions s ON c.id = s.client_id
+      GROUP BY c.id, c.name, c.phone, c.email, c.created_at
+      ORDER BY c.created_at DESC
+    `
 
-  return clients
+    return clients
+  } catch (error) {
+    console.error("Database connection error:", error)
+    return []
+  }
 }
 
 export default async function ClientsPage() {

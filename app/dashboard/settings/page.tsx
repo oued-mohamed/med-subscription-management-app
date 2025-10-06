@@ -5,17 +5,26 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { WhatsAppTemplateSettings } from "@/components/whatsapp-template-settings"
 
 async function getSettings() {
-  const settings = await sql`
-    SELECT key, value FROM settings
-    WHERE key IN ('whatsapp_7day_template', 'whatsapp_1day_template', 'whatsapp_expiry_template')
-  `
+  try {
+    const settings = await sql`
+      SELECT key, value FROM settings
+      WHERE key IN ('whatsapp_7day_template', 'whatsapp_1day_template', 'whatsapp_expiry_template')
+    `
 
-  const settingsMap = new Map(settings.map((s) => [s.key, s.value]))
+    const settingsMap = new Map(settings.map((s) => [s.key, s.value]))
 
-  return {
-    template7Day: settingsMap.get("whatsapp_7day_template") || "",
-    template1Day: settingsMap.get("whatsapp_1day_template") || "",
-    templateExpiry: settingsMap.get("whatsapp_expiry_template") || "",
+    return {
+      template7Day: settingsMap.get("whatsapp_7day_template") || "",
+      template1Day: settingsMap.get("whatsapp_1day_template") || "",
+      templateExpiry: settingsMap.get("whatsapp_expiry_template") || "",
+    }
+  } catch (error) {
+    console.error("Database connection error:", error)
+    return {
+      template7Day: "",
+      template1Day: "",
+      templateExpiry: "",
+    }
   }
 }
 

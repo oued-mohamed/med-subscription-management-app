@@ -77,7 +77,7 @@ export function ImportClientsDialog({ open, onOpenChange }: ImportClientsDialogP
         <DialogHeader>
           <DialogTitle>Import Clients from Excel/CSV</DialogTitle>
           <DialogDescription>
-            Upload an Excel or CSV file with columns: Name, Phone, Email, Start Date, Subscription Type
+            Upload an Excel or CSV file with columns: Name/Email, Phone/Téléphone, Email, Start Date/Date Début, Subscription Type/Durée Abonnement
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,12 +96,15 @@ export function ImportClientsDialog({ open, onOpenChange }: ImportClientsDialogP
           <div className="bg-muted p-4 rounded-lg text-sm space-y-2">
             <p className="font-medium">Expected format:</p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1">
-              <li>Name (required)</li>
-              <li>Phone (required, format: +1234567890)</li>
+              <li>Name/Nom du Client (required)</li>
+              <li>Phone/Téléphone (required, format: +1234567890)</li>
               <li>Email (optional)</li>
-              <li>Start Date (required, format: YYYY-MM-DD)</li>
-              <li>Subscription Type (required: Monthly, 3 Months, or Yearly)</li>
+              <li>Start Date/Date Début (required, format: DD/MM/YYYY or YYYY-MM-DD)</li>
+              <li>Subscription Type/Durée Abonnement (required: Monthly/mois, 3 Months/3 mois, or Yearly/ans)</li>
             </ul>
+            <p className="text-xs text-muted-foreground mt-2">
+              French headers are supported: "Nom du Client", "Téléphone", "Date Début", "Durée Abonnement"
+            </p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4">

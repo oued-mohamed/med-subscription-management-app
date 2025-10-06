@@ -24,14 +24,19 @@ export async function verifyToken(token: string): Promise<User | null> {
 }
 
 export async function getUser(): Promise<User | null> {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("auth-token")
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get("auth-token")
 
-  if (!token) {
+    if (!token) {
+      return null
+    }
+
+    return verifyToken(token.value)
+  } catch (error) {
+    console.error("Auth error:", error)
     return null
   }
-
-  return verifyToken(token.value)
 }
 
 export async function setAuthCookie(token: string) {

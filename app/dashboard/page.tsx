@@ -8,12 +8,13 @@ import { CalendarHeatmap } from "@/components/calendar-heatmap"
 import { RecentActivity } from "@/components/recent-activity"
 
 async function getDashboardData() {
-  // Get active subscriptions count
-  const activeSubsResult = await sql`
-    SELECT COUNT(*) as count
-    FROM subscriptions
-    WHERE status = 'active'
-  `
+  try {
+    // Get active subscriptions count
+    const activeSubsResult = await sql`
+      SELECT COUNT(*) as count
+      FROM subscriptions
+      WHERE status = 'active'
+    `
 
   // Get expiring soon count (next 7 days)
   const expiringSoonResult = await sql`
@@ -80,16 +81,31 @@ async function getDashboardData() {
     LIMIT 5
   `
 
-  return {
-    kpis: {
-      activeSubscriptions: Number(activeSubsResult[0].count),
-      expiringSoon: Number(expiringSoonResult[0].count),
-      renewalsThisMonth: Number(renewalsResult[0].count),
-      revenueThisMonth: Number(revenueResult[0].total),
-    },
-    trendData,
-    upcomingExpirations,
-    recentSubscriptions,
+    return {
+      kpis: {
+        activeSubscriptions: Number(activeSubsResult[0].count),
+        expiringSoon: Number(expiringSoonResult[0].count),
+        renewalsThisMonth: Number(renewalsResult[0].count),
+        revenueThisMonth: Number(revenueResult[0].total),
+      },
+      trendData,
+      upcomingExpirations,
+      recentSubscriptions,
+    }
+  } catch (error) {
+    console.error("Database connection error:", error)
+    // Return fallback data when database is not available
+    return {
+      kpis: {
+        activeSubscriptions: 0,
+        expiringSoon: 0,
+        renewalsThisMonth: 0,
+        revenueThisMonth: 0,
+      },
+      trendData: [],
+      upcomingExpirations: [],
+      recentSubscriptions: [],
+    }
   }
 }
 

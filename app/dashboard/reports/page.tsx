@@ -8,8 +8,9 @@ import { SubscriptionBreakdown } from "@/components/subscription-breakdown"
 import { RevenueForecast } from "@/components/revenue-forecast"
 
 async function getReportsData(searchParams: { [key: string]: string | string[] | undefined }) {
-  const subscriptionType = searchParams.type as string | undefined
-  const timeRange = (searchParams.range as string) || "6months"
+  try {
+    const subscriptionType = searchParams.type as string | undefined
+    const timeRange = (searchParams.range as string) || "6months"
 
   // Calculate date range
   let dateFilter = "CURRENT_DATE - INTERVAL '6 months'"
@@ -79,11 +80,20 @@ async function getReportsData(searchParams: { [key: string]: string | string[] |
     GROUP BY subscription_type
   `
 
-  return {
-    revenueData,
-    breakdown,
-    stats: stats[0],
-    forecast,
+    return {
+      revenueData,
+      breakdown,
+      stats: stats[0],
+      forecast,
+    }
+  } catch (error) {
+    console.error("Database connection error:", error)
+    return {
+      revenueData: [],
+      breakdown: [],
+      stats: { total_subscriptions: 0, active_subscriptions: 0, total_revenue: 0, avg_revenue: 0 },
+      forecast: [],
+    }
   }
 }
 
